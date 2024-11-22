@@ -9,17 +9,19 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [tasks, updateTasks] = useState<TTask[]>([]);
+  const [isInitialized, updateIsInitialized] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const tasks = JSON.parse(localStorage.getItem("data") ?? "[]") as TTask[];
     updateTasks(tasks);
+    updateIsInitialized(true);
   }, []);
 
   useEffect(() => {
-    alert("Helo");
+    if (!isInitialized) return;
     localStorage.setItem("data", JSON.stringify(tasks));
-  }, [tasks]);
+  }, [tasks, isInitialized]);
 
   const handleAddTask = (name: string) => {
     if (!name) return;
@@ -58,7 +60,7 @@ export default function Home() {
     <div className="h-[100vh] w-full bg-slate-900 text-white flex flex-col items-center">
       <div className="flex flex-col gap-3 w-[28rem] items-start max-h-full py-5 pl-5 pr-3">
         <div className="w-full pr-2">
-          <Input onSubmit={handleAddTask} />
+          <Input placeholder="Add task" onSubmit={handleAddTask} />
         </div>
         <div className="h-2"></div>
         <span className="mb-2 text-lg font-semibold text-white">Tasks:</span>

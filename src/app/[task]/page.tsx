@@ -25,6 +25,7 @@ export type Todo = {
 export default function TodoList() {
   const params = useParams<{ task: string }>();
 
+  const [isInitialized, updateIsInitialized] = useState(false);
   const [todos, updateTodos] = useState<
     {
       label: string;
@@ -40,16 +41,18 @@ export default function TodoList() {
     if (!task) return;
 
     updateTodos(task?.todos ?? []);
+    updateIsInitialized(true);
   }, []);
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("data") ?? "[]") as Task[];
     const task = data.find((el: Task) => el.id === params.task);
-    if (task) {
-      task.todos = todos;
-      localStorage.setItem("data", JSON.stringify(data));
-    }
-  }, [todos]);
+
+    if (!task || !isInitialized) return;
+
+    task.todos = todos;
+    localStorage.setItem("data", JSON.stringify(data));
+  }, [todos, isInitialized]);
 
   function handleClick(state: boolean, id: string) {
     const currentTodos = [...todos];
@@ -150,7 +153,7 @@ export default function TodoList() {
       <div className="h-[100vh] w-full bg-slate-900 text-white flex flex-col items-center">
         <div className="flex flex-col gap-3 w-[28rem] items-start max-h-full py-5 pl-5 pr-3">
           <div className="w-full pr-2">
-            <Input onSubmit={handleAddTodo} />
+            <Input placeholder="Add todo" onSubmit={handleAddTodo} />
           </div>
           <div className="h-2"></div>
           <span className="mb-2 text-lg font-semibold text-white">Todos:</span>
