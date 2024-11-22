@@ -5,15 +5,21 @@ import { Task as TTask } from "./[task]/page";
 import { v4 as uuidv4 } from "uuid";
 import Input from "./shared/components/Input";
 import Task from "./components/Task";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [tasks, updateTasks] = useState<TTask[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const tasks = JSON.parse(localStorage.getItem("data") ?? "[]") as TTask[];
-
-    updateTasks(tasks.filter((el) => el.name));
+    updateTasks(tasks);
   }, []);
+
+  useEffect(() => {
+    alert("Helo");
+    localStorage.setItem("data", JSON.stringify(tasks));
+  }, [tasks]);
 
   const handleAddTask = (name: string) => {
     if (!name) return;
@@ -21,7 +27,10 @@ export default function Home() {
     updateTasks([...tasks, { id: uuidv4(), name, todos: [] }]);
   };
 
-  const handleClick = () => {};
+  const handleClick = (id: string) => {
+    router.push(`/${id}`);
+  };
+
   const handleDelete = () => {};
   const handleEdit = () => {};
 
@@ -30,7 +39,9 @@ export default function Home() {
       <div
         key={el.id}
         className={
-          i !== tasks.length - 1 ? "border-b border-slate-500 p-2" : "p-2"
+          i !== tasks.length - 1
+            ? "border-b border-slate-500 p-2 pl-0"
+            : "p-2 pl-0"
         }
       >
         <Task

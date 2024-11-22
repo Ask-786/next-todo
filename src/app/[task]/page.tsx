@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useParams } from "next/navigation";
@@ -31,6 +32,24 @@ export default function TodoList() {
       id: string;
     }[]
   >([]);
+
+  useEffect(() => {
+    const tasks = JSON.parse(localStorage.getItem("data") ?? "[]") as Task[];
+    const task = tasks.find((el: Task) => el.id === params.task);
+
+    if (!task) return;
+
+    updateTodos(task?.todos ?? []);
+  }, []);
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("data") ?? "[]") as Task[];
+    const task = data.find((el: Task) => el.id === params.task);
+    if (task) {
+      task.todos = todos;
+      localStorage.setItem("data", JSON.stringify(data));
+    }
+  }, [todos]);
 
   function handleClick(state: boolean, id: string) {
     const currentTodos = [...todos];
@@ -79,23 +98,6 @@ export default function TodoList() {
     if (!confirmation) return;
     updateTodos(currentTodos.filter((el) => !el.completed));
   }
-
-  useEffect(() => {
-    const tasks = JSON.parse(localStorage.getItem("data") ?? "[]") as Task[];
-    const task = tasks.find((el: Task) => el.name === params.task);
-    updateTodos(task?.todos ?? []);
-  }, [params.task]);
-
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("data") ?? "[]") as Task[];
-    const task = data.find((el: Task) => el.name === params.task);
-    if (task) {
-      task.todos = todos;
-    } else {
-      data.push({ name: params.task, todos, id: uuidv4() });
-    }
-    localStorage.setItem("data", JSON.stringify(data));
-  }, [params.task, todos]);
 
   const findCard = useCallback(
     (id: string) => {
