@@ -1,9 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useParams } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import update from "immutability-helper";
 import Todo from "./components/Todo";
 import { DndProvider } from "react-dnd";
@@ -34,6 +33,12 @@ export default function TodoList() {
     }[]
   >([]);
 
+  const task = useMemo(() => {
+    if (typeof window === "undefined") return { name: "" };
+    const tasks = JSON.parse(localStorage.getItem("data") ?? "[]") as Task[];
+    return tasks.find((el: Task) => el.id === params.task) ?? { name: "" };
+  }, [params.task]);
+
   useEffect(() => {
     const tasks = JSON.parse(localStorage.getItem("data") ?? "[]") as Task[];
     const task = tasks.find((el: Task) => el.id === params.task);
@@ -42,7 +47,7 @@ export default function TodoList() {
 
     updateTodos(task?.todos ?? []);
     updateIsInitialized(true);
-  }, []);
+  }, [params.task]);
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("data") ?? "[]") as Task[];
@@ -52,7 +57,7 @@ export default function TodoList() {
 
     task.todos = todos;
     localStorage.setItem("data", JSON.stringify(data));
-  }, [todos, isInitialized]);
+  }, [todos, isInitialized, params.task]);
 
   function handleClick(state: boolean, id: string) {
     const currentTodos = [...todos];
@@ -173,7 +178,9 @@ export default function TodoList() {
             <Input placeholder="Add todo" onSubmit={handleAddTodo} />
           </div>
           <div className="h-2"></div>
-          <span className="mb-2 text-lg font-semibold text-white">Todos:</span>
+          <span className="mb-2 text-lg font-semibold text-white">
+            Todos {task.name && `(${task.name})`}:
+          </span>
           <ul className="max-w-md list-inside text-gray-400 h-full overflow-auto w-full pr-1">
             {!isInitialized
               ? loadingTemplate
