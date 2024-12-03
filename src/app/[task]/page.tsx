@@ -148,17 +148,38 @@ export default function TodoList() {
     );
   });
 
+  const loadingTemplate = (
+    <div className="h-full w-full text-white flex flex-col items-center justify-center">
+      <svg
+        className="h-6 w-6 animate-spin-slow duration-1000 text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 512 512"
+        fill="currentColor"
+      >
+        <path
+          opacity=".4"
+          d="M65.6 414.4c0 8.2 3.1 16.4 9.4 22.6c12.5 12.5 32.8 12.5 45.3 0l45.3-45.3c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L75 391.8c-6.2 6.2-9.4 14.4-9.4 22.6zM224 416l0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64c0-17.7-14.3-32-32-32s-32 14.3-32 32zM346.5 120.2c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L437 120.2c12.5-12.5 12.5-32.8 0-45.3c-6.2-6.2-14.4-9.4-22.6-9.4s-16.4 3.1-22.6 9.4l-45.3 45.3zm0 226.3c-12.5 12.5-12.5 32.8 0 45.3L391.8 437c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-45.3-45.3c-12.5-12.5-32.8-12.5-45.3 0zM384 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32z"
+        />
+        <path d="M256 0c-17.7 0-32 14.3-32 32l0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64c0-17.7-14.3-32-32-32zM0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32zM120.2 75C107.7 62.5 87.5 62.5 75 75s-12.5 32.8 0 45.3l45.3 45.3c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L120.2 75z" />
+      </svg>
+    </div>
+  );
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="h-[100vh] w-full bg-slate-900 text-white flex flex-col items-center">
-        <div className="flex flex-col gap-3 w-[28rem] items-start max-h-full py-5 pl-5 pr-3">
+      <div className="h-dvh w-full bg-slate-900 text-white flex flex-col items-center">
+        <div className="flex h-full flex-col gap-3 w-[28rem] items-start max-h-full py-5 pl-5 pr-3">
           <div className="w-full pr-2">
             <Input placeholder="Add todo" onSubmit={handleAddTodo} />
           </div>
           <div className="h-2"></div>
           <span className="mb-2 text-lg font-semibold text-white">Todos:</span>
           <ul className="max-w-md list-inside text-gray-400 h-full overflow-auto w-full pr-1">
-            {todos.length ? todosList : "No todos in the list!!"}
+            {!isInitialized
+              ? loadingTemplate
+              : todos.length
+                ? todosList
+                : "No todos in the list!!"}
           </ul>
 
           {Boolean(todos.filter((el) => el.completed).length) && (

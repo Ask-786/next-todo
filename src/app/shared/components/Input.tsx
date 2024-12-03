@@ -25,7 +25,7 @@ export default function Input({ onSubmit, placeholder }: Props) {
           ref={inputRef}
           id="default-search"
           className="block w-full p-4 text-sm border rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
-          placeholder="Enter todo"
+          placeholder={placeholder}
           required
         />
         <button

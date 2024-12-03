@@ -21,7 +21,7 @@ export default function Todo({
 }: Props) {
   const itemRef = useRef<HTMLLIElement | null>(null);
   const [isControlShown, updateShowControl] = useState(false);
-  const [_, drag] = useDrag(
+  const [dragging, drag] = useDrag(
     () => ({
       type: "card",
       item: { id: todo.id, originalIndex: index },
@@ -81,7 +81,7 @@ export default function Todo({
       title={todo.label}
     >
       <div
-        className={`flex items-center cursor-pointer w-full ${isControlShown ? "max-w-[81%]" : ""}`}
+        className={`flex items-center cursor-pointer w-full ${isControlShown ? "max-w-[81%]" : ""} ${dragging.isDragging ? "opacity-15" : ""}`}
         onClick={handleOnClicked}
       >
         <svg
@@ -133,7 +133,9 @@ export default function Todo({
             onClick={handleOnDelete}
             title="Delete Todo"
             className="p-0.5 flex items-center justify-center cursor-move"
-            ref={() => drag(drop(itemRef))}
+            ref={() => {
+              drag(drop(itemRef));
+            }}
           >
             <svg
               className="w-3.5 h-3.5 text-gray-400 hover:text-blue-400 flex-shrink-0"
